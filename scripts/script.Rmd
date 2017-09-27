@@ -1,0 +1,59 @@
+
+---
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Consumo de Água e Desigualdade
+
+A breve e presente análise tem por objetivo uma avaliação do consumo de água em países estadunidenses em comparativo com países da Africa-subsaariana como fator de influência em desigualdade.
+
+## Variáveis presentes no dataset utilizado para análise
+**country**:                         
+**populattion_milions**:            
+**hdi_2015**:                       
+**gini**:                           
+**access_to_isanitation_2008**:     
+**access_to_idrinking_water_2008**: 
+**total_freshwater_wd_2010**:  
+**per_capta_wd_m3_2010**:    
+**annual_renewable_water_2010**:
+
+## Correlação entre as variáveis
+```{r include=FALSE}
+library(Hmisc)
+library(ggplot2)
+library(reshape2)
+library(xtable)
+
+setwd('~/git/Water-Consumption-And-Inequality/datasets')
+df = read.table("merged_data.csv", header=TRUE, sep=";")
+
+df_original = df
+df = df[,c(-1,-10)]
+df = na.omit(df)
+rcorr(as.matrix(df))
+```
+
+
+```{r, echo=FALSE}
+mat <- round(cor(df),2)
+melted_cormat <- melt(mat)
+
+ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) + geom_tile() + 
+  theme(axis.text.x = element_text(angle = 50, vjust = 1, size = 8, hjust = 1),
+        axis.text.y = element_text(angle = 0, vjust = 1, size = 8, hjust = 1),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank()) + 
+  coord_fixed() +
+  scale_fill_gradient2(low  = "black", 
+                       high = "darkturquoise", 
+                       mid  = "white", 
+                       midpoint = 0, 
+                       limit = c(-1,1), 
+                       name="Correlation") +
+  geom_text(aes(Var2, Var1, label = value), color = "black", size = 3)
+```

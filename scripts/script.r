@@ -11,3 +11,6 @@ DF2 = read.table("access_to_improved_sanitation.csv", header=TRUE, sep=";")
 DF3 = read.table("freshwater_withdrawal.csv", header=TRUE, sep=";")
 DF4 = read.table("total_renewable_freshwater_supply.csv", header=TRUE, sep=";")
 
+DF2 = DF2[,c(-1)]
+DF2 = na.omit(DF2)
+rcorr(as.matrix(DF2))

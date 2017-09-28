@@ -8,7 +8,7 @@ library(reshape2)
 setwd('~/git/Water-Consumption-And-Inequality/datasets')
 
 # import datasets
-df = read.table("merged_data.csv", header=TRUE, sep=";")
+df = read.table("merged_data.csv", header=TRUE, sep=",")
 
 df_original = df
 df = df[,c(-1,-10)]

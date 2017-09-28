@@ -78,7 +78,7 @@ ggplot(df_original, aes(x=COUNTRY,y=TOTAL_FRESHWATER_WD_KM3_2010)) +
   theme(axis.text.x = element_text(angle = 90, vjust = 1, size = 8, hjust = 1),
         axis.text.y = element_text(angle = 0, vjust = 1, size = 8, hjust = 1)) +
   scale_fill_continuous(name="Retirada de água\npotável km³/ano") +
-  xlab("") + ylab("Total de água potável retirada (km³/ano)\n(Na forma de raiz quadrada)") + ggtitle("")
+  xlab("") + ylab("Total de água potável retirada (km³/ano)") + ggtitle("")
 
 ```
 
@@ -173,6 +173,75 @@ mapParams <- mapCountryData(map,
                catMethod="fixedWidth", 
                mapTitle = "Agua renovavel anual km³/ano", 
                colourPalette = "heat",
+               oceanCol='lightblue',
+               missingCountryCol = 'white',
+               borderCol = 'gray',
+               addLegend = FALSE)
+
+suppressWarnings(do.call(addMapLegend, c(mapParams, legendLabels="all",legendWidth=0.5,legendIntervals="data")))
+```
+
+### Coeficiente de GINI
+```{r, echo=FALSE, fig.height=7, fig.width=14}
+sub_df <- df_original[,c("COUNTRY","GINI")]
+
+
+map <- joinCountryData2Map(sub_df, joinCode = "NAME",
+                              nameJoinColumn = "COUNTRY",suggestForFailedCodes = TRUE)
+
+colourPalette <- RColorBrewer::brewer.pal(5,'RdPu')
+
+mapParams <- mapCountryData(map, 
+               nameColumnToPlot="GINI", 
+               catMethod="fixedWidth", 
+               mapTitle = "Coeficiente de GINI", 
+               colourPalette = colourPalette,
+               oceanCol='lightblue',
+               missingCountryCol = 'white',
+               borderCol = 'gray',
+               addLegend = FALSE)
+
+suppressWarnings(do.call(addMapLegend, c(mapParams, legendLabels="all",legendWidth=0.5,legendIntervals="data")))
+```
+
+### Consumo per capta de agua doce
+```{r, echo=FALSE, fig.height=7, fig.width=14}
+sub_df <- df_original[,c("COUNTRY","PER_CAPTA_WD_M3_2010")]
+
+
+map <- joinCountryData2Map(sub_df, joinCode = "NAME",
+                              nameJoinColumn = "COUNTRY",suggestForFailedCodes = TRUE)
+
+colourPalette <- RColorBrewer::brewer.pal(5,'RdPu')
+
+mapParams <- mapCountryData(map, 
+               nameColumnToPlot="PER_CAPTA_WD_M3_2010", 
+               catMethod="fixedWidth", 
+               mapTitle = "Consumo de agua doce per capta em m³", 
+               colourPalette = "topo",
+               oceanCol='lightblue',
+               missingCountryCol = 'white',
+               borderCol = 'gray',
+               addLegend = FALSE)
+
+suppressWarnings(do.call(addMapLegend, c(mapParams, legendLabels="all",legendWidth=0.5,legendIntervals="data")))
+```
+
+### Acesso ao consumo de agua potavel
+```{r, echo=FALSE, fig.height=7, fig.width=14}
+sub_df <- df_original[,c("COUNTRY","ACCESS_TO_IDRINKING_WATER_2008")]
+
+
+map <- joinCountryData2Map(sub_df, joinCode = "NAME",
+                              nameJoinColumn = "COUNTRY",suggestForFailedCodes = TRUE)
+
+colourPalette <- RColorBrewer::brewer.pal(5,'RdPu')
+
+mapParams <- mapCountryData(map, 
+               nameColumnToPlot="ACCESS_TO_IDRINKING_WATER_2008", 
+               catMethod="fixedWidth", 
+               mapTitle = "Parcela da populacao com acesso ao consumo de agua potavel", 
+               colourPalette = "topo",
                oceanCol='lightblue',
                missingCountryCol = 'white',
                borderCol = 'gray',

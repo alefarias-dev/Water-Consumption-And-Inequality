@@ -21,7 +21,7 @@ ggplot(df_original, aes(x=COUNTRY,y=TOTAL_FRESHWATER_WD_KM3_2010)) +
   theme(axis.text.x = element_text(angle = 90, vjust = 1, size = 8, hjust = 1),
         axis.text.y = element_text(angle = 0, vjust = 1, size = 8, hjust = 1)) +
   scale_fill_continuous(name="Retirada de água\npotável km³/ano") +
-  xlab("") + ylab("Total de água potável retirada (km³/ano)\n(Na forma de raiz quadrada)") + ggtitle("")
+  xlab("") + ylab("Total de água potável retirada (km³/ano)") + ggtitle("")
 ```
 
 ![](script_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-4-1.png)
@@ -88,3 +88,30 @@ Mapas
     ## 199 codes from the map weren't represented in your data
 
 ![](script_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-9-1.png)
+
+### Coeficiente de GINI
+
+    ## 44 codes from your data successfully matched countries in the map
+    ## 1 codes from your data failed to match with a country code in the map
+    ## 199 codes from the map weren't represented in your data
+
+    ## Warning in rwmGetColours(colourPalette, numColours): 5 colours specified
+    ## and 7 required, using interpolation to calculate colours
+
+![](script_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-10-1.png)
+
+### Consumo per capta de agua doce
+
+    ## 44 codes from your data successfully matched countries in the map
+    ## 1 codes from your data failed to match with a country code in the map
+    ## 199 codes from the map weren't represented in your data
+
+![](script_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-11-1.png)
+
+### Acesso ao consumo de agua potavel
+
+    ## 44 codes from your data successfully matched countries in the map
+    ## 1 codes from your data failed to match with a country code in the map
+    ## 199 codes from the map weren't represented in your data
+
+![](script_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-12-1.png)

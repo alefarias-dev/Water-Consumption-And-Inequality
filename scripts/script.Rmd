@@ -1,0 +1,107 @@
+```{r, include=FALSE}
+
+library(ggpubr)
+library(Hmisc)
+library(ggplot2)
+library(reshape2)
+library(xtable)
+
+```
+
+---
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Consumo de Água e Desigualdade
+
+A breve e presente análise tem por objetivo uma avaliação do consumo de água em países estadunidenses em comparativo com países da Africa-subsaariana como fator de influência em desigualdade.
+
+## Correlação entre as variáveis
+```{r include=FALSE}
+
+setwd('~/git/Water-Consumption-And-Inequality/datasets')
+df = read.table("merged_data.csv", header=TRUE, sep=",")
+
+df_original = df
+df = df[,c(-1,-10)]
+df = na.omit(df)
+
+# omite os NAs
+df_original <- na.omit(df_original)
+
+df_original <- df_original[order(df_original$HDI_2015),]
+
+df_original$COUNTRY <- factor(df_original$COUNTRY, levels=df_original$COUNTRY[order(df_original$HDI_2015)])
+
+ggplot(df_original, aes(x=COUNTRY,y=HDI_2015)) +
+  geom_bar(stat="identity", aes(fill=HDI_2015)) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 1, size = 8, hjust = 1),
+        axis.text.y = element_text(angle = 0, vjust = 1, size = 8, hjust = 1))
+```
+
+
+```{r, echo=FALSE}
+mat <- round(cor(df),2)
+melted_cormat <- melt(mat)
+
+ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) + geom_tile() + 
+  theme(axis.text.x = element_text(angle = 50, vjust = 1, size = 8, hjust = 1),
+        axis.text.y = element_text(angle = 0, vjust = 1, size = 8, hjust = 1),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank()) + 
+  coord_fixed() +
+  scale_fill_gradient2(low  = "black", 
+                       high = "darkturquoise", 
+                       mid  = "white", 
+                       midpoint = 0, 
+                       limit = c(-1,1), 
+                       name="Correlation") +
+  geom_text(aes(Var2, Var1, label = value), color = "black", size = 3)
+```
+
+Obtem-se da matriz de correlação as correlações fortes  
+**TOTAL_FRESHWATER_WD_KM3_2010 X HDI_2015**  
+```{r, echo=FALSE}
+df_original <- df_original[order(df_original$TOTAL_FRESHWATER_WD_KM3_2010),]
+
+df_original$COUNTRY <- factor(df_original$COUNTRY, levels=df_original$COUNTRY[order(df_original$TOTAL_FRESHWATER_WD_KM3_2010)])
+
+ggplot(df_original, aes(x=COUNTRY,y=sqrt(TOTAL_FRESHWATER_WD_KM3_2010))) +
+  geom_bar(stat="identity", aes(fill=TOTAL_FRESHWATER_WD_KM3_2010)) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 1, size = 8, hjust = 1),
+        axis.text.y = element_text(angle = 0, vjust = 1, size = 8, hjust = 1))
+
+```
+
+**TOTAL_FRESH_WATER_WD_KM3_2010 X POPULATION_MILLIONS_2010**  
+```{r}
+df_original <- df_original[order(df_original$POPULATION_MILLIONS_2010),]
+
+df_original$COUNTRY <- factor(df_original$COUNTRY, levels=df_original$COUNTRY[order(df_original$POPULATION_MILLIONS_2010)])
+
+ggplot(df_original, aes(x=COUNTRY,y=POPULATION_MILLIONS_2010)) +
+  geom_bar(stat="identity", aes(fill=POPULATION_MILLIONS_2010)) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 1, size = 8, hjust = 1),
+        axis.text.y = element_text(angle = 0, vjust = 1, size = 8, hjust = 1))
+```
+
+**ANNUAL_RENEWABLE_WATER_2010 X HDI_2015**  
+```{r}
+df_original <- df_original[order(df_original$ANNUAL_RENEWABLE_WATER_2010),]
+
+df_original$COUNTRY <- factor(df_original$COUNTRY, levels=df_original$COUNTRY[order(df_original$ANNUAL_RENEWABLE_WATER_2010)])
+
+ggplot(df_original, aes(x=COUNTRY,y=sqrt(ANNUAL_RENEWABLE_WATER_2010))) +
+  geom_bar(stat="identity", aes(fill=ANNUAL_RENEWABLE_WATER_2010)) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 1, size = 8, hjust = 1),
+        axis.text.y = element_text(angle = 0, vjust = 1, size = 8, hjust = 1)) +
+  xlab("") + ylab("Água renovável") +
+  scale_fill_continuous(name="Água renovável km³")
+```
+
+
+

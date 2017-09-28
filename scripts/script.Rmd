@@ -1,11 +1,13 @@
 ```{r, include=FALSE}
 
 library(ggpubr)
-library(Hmisc)
 library(ggplot2)
 library(reshape2)
 library(xtable)
-
+library(maps)
+library(ggmap)
+library(mapdata)
+library(rworldmap)
 ```
 
 ---
@@ -16,23 +18,21 @@ output: github_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Consumo de √Ågua e Desigualdade
+## Consumo de Agua e Desigualdade
 
-A breve e presente an√°lise tem por objetivo uma avalia√ß√£o do consumo de √°gua em pa√≠ses estadunidenses em comparativo com pa√≠ses da Africa-subsaariana como fator de influ√™ncia em desigualdade.
+A breve e presente analise tem por objetivo uma avaliacao do consumo de Agua em paises estadunidenses em comparativo com paises da Africa-subsaariana como fator de influencia em desigualdade.
 
-## Correla√ß√£o entre as vari√°veis
+## Correlacao entre as variaveis
 ```{r include=FALSE}
 
-setwd('~/git/Water-Consumption-And-Inequality/datasets')
+setwd('C:/Users/Administrador/Desktop/git/SMC/Water-Consumption-And-Inequality/datasets')
 df = read.table("merged_data.csv", header=TRUE, sep=",")
 
 df_original = df
 df = df[,c(-1,-10)]
 df = na.omit(df)
 
-# omite os NAs
-df_original <- na.omit(df_original)
-
+df_original = na.omit(df_original)
 df_original <- df_original[order(df_original$HDI_2015),]
 
 df_original$COUNTRY <- factor(df_original$COUNTRY, levels=df_original$COUNTRY[order(df_original$HDI_2015)])
@@ -40,10 +40,11 @@ df_original$COUNTRY <- factor(df_original$COUNTRY, levels=df_original$COUNTRY[or
 ggplot(df_original, aes(x=COUNTRY,y=HDI_2015)) +
   geom_bar(stat="identity", aes(fill=HDI_2015)) +
   theme(axis.text.x = element_text(angle = 90, vjust = 1, size = 8, hjust = 1),
-        axis.text.y = element_text(angle = 0, vjust = 1, size = 8, hjust = 1))
+        axis.text.y = element_text(angle = 0, vjust = 1, size = 8, hjust = 1)) +
+  xlab("") + ylab("IDH") +
+  scale_fill_continuous(name="IDH") +
+  ggtitle("Indice de desenvolvimento humano")
 ```
-
-
 ```{r, echo=FALSE}
 mat <- round(cor(df),2)
 melted_cormat <- melt(mat)
@@ -59,25 +60,28 @@ ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) + geom_tile() +
                        mid  = "white", 
                        midpoint = 0, 
                        limit = c(-1,1), 
-                       name="Correlation") +
-  geom_text(aes(Var2, Var1, label = value), color = "black", size = 3)
+                       name="Grau de correlacao") +
+  geom_text(aes(Var2, Var1, label = value), color = "black", size = 3) +
+  ggtitle("Matriz de correlacao de Pearson")
 ```
 
-Obtem-se da matriz de correla√ß√£o as correla√ß√µes fortes  
-**TOTAL_FRESHWATER_WD_KM3_2010 X HDI_2015**  
-```{r, echo=FALSE}
+
+**TOTAL_FRESHWATER_WD_KM3_2010**  
+```{r}
 df_original <- df_original[order(df_original$TOTAL_FRESHWATER_WD_KM3_2010),]
 
 df_original$COUNTRY <- factor(df_original$COUNTRY, levels=df_original$COUNTRY[order(df_original$TOTAL_FRESHWATER_WD_KM3_2010)])
 
-ggplot(df_original, aes(x=COUNTRY,y=sqrt(TOTAL_FRESHWATER_WD_KM3_2010))) +
+ggplot(df_original, aes(x=COUNTRY,y=TOTAL_FRESHWATER_WD_KM3_2010)) +
   geom_bar(stat="identity", aes(fill=TOTAL_FRESHWATER_WD_KM3_2010)) +
   theme(axis.text.x = element_text(angle = 90, vjust = 1, size = 8, hjust = 1),
-        axis.text.y = element_text(angle = 0, vjust = 1, size = 8, hjust = 1))
+        axis.text.y = element_text(angle = 0, vjust = 1, size = 8, hjust = 1)) +
+  scale_fill_continuous(name="Retirada de ·gua\npot·vel km≥/ano") +
+  xlab("") + ylab("Total de ·gua pot·vel retirada (km≥/ano)\n(Na forma de raiz quadrada)") + ggtitle("")
 
 ```
 
-**TOTAL_FRESH_WATER_WD_KM3_2010 X POPULATION_MILLIONS_2010**  
+**POPULATION_MILLIONS_2010**  
 ```{r}
 df_original <- df_original[order(df_original$POPULATION_MILLIONS_2010),]
 
@@ -86,10 +90,11 @@ df_original$COUNTRY <- factor(df_original$COUNTRY, levels=df_original$COUNTRY[or
 ggplot(df_original, aes(x=COUNTRY,y=POPULATION_MILLIONS_2010)) +
   geom_bar(stat="identity", aes(fill=POPULATION_MILLIONS_2010)) +
   theme(axis.text.x = element_text(angle = 90, vjust = 1, size = 8, hjust = 1),
-        axis.text.y = element_text(angle = 0, vjust = 1, size = 8, hjust = 1))
-```
+        axis.text.y = element_text(angle = 0, vjust = 1, size = 8, hjust = 1)) +   scale_fill_continuous(name="Populacao\n(milhıes)") +
+  xlab("") + ylab("Populacao em milhoes")
+ ```
 
-**ANNUAL_RENEWABLE_WATER_2010 X HDI_2015**  
+**ANNUAL_RENEWABLE_WATER_2010**
 ```{r}
 df_original <- df_original[order(df_original$ANNUAL_RENEWABLE_WATER_2010),]
 
@@ -99,8 +104,80 @@ ggplot(df_original, aes(x=COUNTRY,y=sqrt(ANNUAL_RENEWABLE_WATER_2010))) +
   geom_bar(stat="identity", aes(fill=ANNUAL_RENEWABLE_WATER_2010)) +
   theme(axis.text.x = element_text(angle = 90, vjust = 1, size = 8, hjust = 1),
         axis.text.y = element_text(angle = 0, vjust = 1, size = 8, hjust = 1)) +
-  xlab("") + ylab("√Ågua renov√°vel") +
-  scale_fill_continuous(name="√Ågua renov√°vel km¬≥")
+  xlab("") + ylab("Agua renovavel") +
+  scale_fill_continuous(name="Agua renovavel km≥")
+```
+
+## Mapas
+
+### IDH
+```{r, echo=FALSE, fig.height=7, fig.width=14}
+sub_df <- df_original[,c("COUNTRY","HDI_2015")]
+
+map <- joinCountryData2Map(sub_df, joinCode = "NAME",
+                              nameJoinColumn = "COUNTRY",suggestForFailedCodes = TRUE)
+
+colourPalette <- RColorBrewer::brewer.pal(5,'RdPu')
+
+mapParams <- mapCountryData(map, 
+               nameColumnToPlot="HDI_2015", 
+               catMethod="fixedWidth", 
+               mapTitle = "Indice de desenvolvimento Humano", 
+               colourPalette = colourPalette,
+               oceanCol='lightblue',
+               missingCountryCol = 'white',
+               borderCol = 'gray',
+               addLegend = FALSE)
+
+suppressWarnings(do.call(addMapLegend, c(mapParams, legendLabels="all",legendWidth=0.5,legendIntervals="data")))
+```
+
+### Total de retirada de agua doce km≥/ano
+```{r, echo=FALSE, fig.height=7, fig.width=14}
+
+sub_df <- df_original[,c("COUNTRY","TOTAL_FRESHWATER_WD_KM3_2010")]
+
+
+map <- joinCountryData2Map(sub_df, joinCode = "NAME",
+                              nameJoinColumn = "COUNTRY",suggestForFailedCodes = TRUE)
+
+colourPalette <- RColorBrewer::brewer.pal(5,'RdPu')
+
+mapParams <- mapCountryData(map, 
+               nameColumnToPlot="TOTAL_FRESHWATER_WD_KM3_2010", 
+               catMethod="fixedWidth", 
+               mapTitle = "Total de retirada de agua doce km≥/ano", 
+               colourPalette = "heat",
+               oceanCol='lightblue',
+               missingCountryCol = 'white',
+               borderCol = 'gray',
+               addLegend = FALSE)
+
+suppressWarnings(do.call(addMapLegend, c(mapParams, legendLabels="all",legendWidth=0.5,legendIntervals="data")))
+```
+
+### Agua renovavel anual 
+```{r, echo=FALSE, fig.height=7, fig.width=14}
+
+sub_df <- df_original[,c("COUNTRY","ANNUAL_RENEWABLE_WATER_2010")]
+
+
+map <- joinCountryData2Map(sub_df, joinCode = "NAME",
+                              nameJoinColumn = "COUNTRY",suggestForFailedCodes = TRUE)
+
+colourPalette <- RColorBrewer::brewer.pal(5,'RdPu')
+
+mapParams <- mapCountryData(map, 
+               nameColumnToPlot="ANNUAL_RENEWABLE_WATER_2010", 
+               catMethod="fixedWidth", 
+               mapTitle = "Agua renovavel anual km≥/ano", 
+               colourPalette = "heat",
+               oceanCol='lightblue',
+               missingCountryCol = 'white',
+               borderCol = 'gray',
+               addLegend = FALSE)
+
+suppressWarnings(do.call(addMapLegend, c(mapParams, legendLabels="all",legendWidth=0.5,legendIntervals="data")))
 ```
 
 
